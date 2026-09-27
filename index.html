@@ -1,186 +1,260 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MK 407 Games</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MK 407</title>
 
-<style>
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#10131a;
-  color:white;
-  text-align:center;
-}
-header{
-  padding:35px 15px;
-  background:linear-gradient(135deg,#111,#243cff);
-}
-h1{
-  font-size:42px;
-  margin:0;
-}
-.logo{
-  font-size:70px;
-}
-.container{
-  padding:20px;
-  max-width:500px;
-  margin:auto;
-}
-.card{
-  background:#1d2230;
-  margin:18px 0;
-  padding:25px;
-  border-radius:22px;
-  box-shadow:0 8px 20px #0005;
-}
-button{
-  background:#2e54ff;
-  color:white;
-  border:0;
-  padding:14px 25px;
-  border-radius:14px;
-  font-size:18px;
-  margin:7px;
-}
-input{
-  padding:14px;
-  border-radius:12px;
-  border:0;
-  font-size:18px;
-  width:120px;
-  text-align:center;
-}
-#score{
-  font-size:45px;
-  font-weight:bold;
-}
-footer{
-  padding:25px;
-  color:#999;
-}
-</style>
+  <style>
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      background:#070b16;
+      color:white;
+      text-align:center;
+      overflow-x:hidden;
+    }
+
+    .splash{
+      position:fixed;
+      inset:0;
+      background:linear-gradient(180deg,#081129,#102bff);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      z-index:9999;
+      transition:opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .splash.hide{
+      opacity:0;
+      visibility:hidden;
+    }
+
+    .splash .logo{
+      font-size:90px;
+      margin-bottom:10px;
+    }
+
+    .splash h1{
+      font-size:56px;
+      margin:0;
+      letter-spacing:2px;
+    }
+
+    .splash p{
+      margin-top:14px;
+      font-size:28px;
+      color:#dbe4ff;
+    }
+
+    header{
+      padding:35px 15px;
+      background:linear-gradient(180deg,#081129,#1d39ff);
+    }
+
+    header .logo{
+      font-size:65px;
+    }
+
+    h1{
+      font-size:44px;
+      margin:10px 0 5px;
+    }
+
+    header p{
+      margin:0;
+      font-size:26px;
+      color:#dbe4ff;
+    }
+
+    .container{
+      padding:20px;
+      max-width:550px;
+      margin:auto;
+    }
+
+    .card{
+      background:#161d33;
+      margin:18px 0;
+      padding:25px 18px;
+      border-radius:24px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.35);
+    }
+
+    .card h2{
+      font-size:26px;
+      margin-top:0;
+      margin-bottom:12px;
+    }
+
+    .card p{
+      font-size:18px;
+      color:#e5e9f7;
+    }
+
+    button{
+      background:#2e54ff;
+      color:white;
+      border:none;
+      padding:14px 22px;
+      border-radius:14px;
+      font-size:20px;
+      margin:8px;
+      cursor:pointer;
+    }
+
+    input{
+      padding:14px;
+      border-radius:12px;
+      border:none;
+      font-size:22px;
+      width:150px;
+      text-align:center;
+      margin:10px 0;
+    }
+
+    #score{
+      font-size:58px;
+      font-weight:bold;
+      margin:10px 0;
+    }
+
+    footer{
+      padding:28px;
+      color:#aaa;
+      font-size:18px;
+    }
+  </style>
 </head>
-
 <body>
 
-<header>
-<div class="logo">🎮</div>
-<h1>MK 407</h1>
-<p>عالم الألعاب</p>
-</header>
+  <!-- شاشة البداية -->
+  <div class="splash" id="splash">
+    <div class="logo">🎮</div>
+    <h1>MK 407</h1>
+    <p>عالم الألعاب</p>
+  </div>
 
-<div class="container">
+  <!-- الموقع -->
+  <header>
+    <div class="logo">🎮</div>
+    <h1>MK 407</h1>
+    <p>عالم الألعاب</p>
+  </header>
 
-<div class="card">
-<h2>🎯 خمن الرقم</h2>
-<p>اختر رقم من 1 إلى 10</p>
-<input id="guess" type="number" min="1" max="10">
-<br>
-<button onclick="guessGame()">جرب</button>
-<p id="guessResult"></p>
-</div>
+  <div class="container">
 
-<div class="card">
-<h2>⚡ تحدي الضغط</h2>
-<p>كم مرة تستطيع الضغط خلال 10 ثواني؟</p>
-<div id="score">0</div>
-<button onclick="tap()">اضغط بسرعة!</button>
-<button onclick="startTap()">ابدأ التحدي</button>
-<p id="timer"></p>
-</div>
+    <div class="card">
+      <h2>🎯 خمن الرقم</h2>
+      <p>اختر رقم من 1 إلى 10</p>
+      <input id="guess" type="number" min="1" max="10">
+      <br>
+      <button onclick="guessGame()">جرب</button>
+      <p id="guessResult"></p>
+    </div>
 
-<div class="card">
-<h2>✊ حجر ورق مقص</h2>
-<button onclick="rps('حجر')">✊ حجر</button>
-<button onclick="rps('ورق')">✋ ورق</button>
-<button onclick="rps('مقص')">✌️ مقص</button>
-<p id="rpsResult"></p>
-</div>
+    <div class="card">
+      <h2>⚡ تحدي الضغط</h2>
+      <p>كم مرة تستطيع الضغط خلال 10 ثواني؟</p>
+      <div id="score">0</div>
+      <button onclick="startTap()">ابدأ التحدي</button>
+      <button onclick="tap()">اضغط بسرعة!</button>
+      <p id="timer"></p>
+    </div>
 
-</div>
+    <div class="card">
+      <h2>✊ حجر ورق مقص</h2>
+      <button onclick="rps('حجر')">✊ حجر</button>
+      <button onclick="rps('ورق')">✋ ورق</button>
+      <button onclick="rps('مقص')">✌️ مقص</button>
+      <p id="rpsResult"></p>
+    </div>
 
-<footer>
-MK 407 © 2026
-</footer>
+  </div>
 
-<script>
-function guessGame(){
-  const user = Number(document.getElementById("guess").value);
-  const number = Math.floor(Math.random()*10)+1;
+  <footer>
+    MK 407 © 2026
+  </footer>
 
-  if(user === number){
-    document.getElementById("guessResult").innerHTML =
-    "🎉 مبروك! الرقم كان " + number;
-  }else{
-    document.getElementById("guessResult").innerHTML =
-    "❌ الرقم الصحيح كان " + number;
-  }
-}
+  <script>
+    // إخفاء شاشة البداية بعد ثانيتين ونص
+    window.onload = function () {
+      setTimeout(() => {
+        document.getElementById("splash").classList.add("hide");
+      }, 2500);
+    };
 
-let score = 0;
-let running = false;
+    function guessGame(){
+      const user = Number(document.getElementById("guess").value);
+      const number = Math.floor(Math.random() * 10) + 1;
 
-function startTap(){
-  score = 0;
-  running = true;
-  document.getElementById("score").innerText = score;
-
-  let seconds = 10;
-  document.getElementById("timer").innerText =
-  "الوقت: " + seconds;
-
-  const countdown = setInterval(()=>{
-    seconds--;
-
-    document.getElementById("timer").innerText =
-    "الوقت: " + seconds;
-
-    if(seconds <= 0){
-      clearInterval(countdown);
-      running = false;
-
-      document.getElementById("timer").innerText =
-      "انتهى الوقت! نتيجتك: " + score;
+      if(user === number){
+        document.getElementById("guessResult").innerHTML =
+          "🎉 مبروك! الرقم كان " + number;
+      } else {
+        document.getElementById("guessResult").innerHTML =
+          "❌ الرقم الصحيح كان " + number;
+      }
     }
-  },1000);
-}
 
-function tap(){
-  if(running){
-    score++;
-    document.getElementById("score").innerText = score;
-  }
-}
+    let score = 0;
+    let running = false;
 
-function rps(player){
-  const choices = ["حجر","ورق","مقص"];
-  const computer =
-  choices[Math.floor(Math.random()*3)];
+    function startTap(){
+      score = 0;
+      running = true;
+      document.getElementById("score").innerText = score;
 
-  let result;
+      let seconds = 10;
+      document.getElementById("timer").innerText = "الوقت: " + seconds;
 
-  if(player === computer){
-    result = "تعادل 🤝";
-  }
-  else if(
-    (player==="حجر" && computer==="مقص") ||
-    (player==="ورق" && computer==="حجر") ||
-    (player==="مقص" && computer==="ورق")
-  ){
-    result = "أنت ربحت 🎉";
-  }
-  else{
-    result = "الكمبيوتر ربح 😄";
-  }
+      const countdown = setInterval(() => {
+        seconds--;
+        document.getElementById("timer").innerText = "الوقت: " + seconds;
 
-  document.getElementById("rpsResult").innerHTML =
-  "أنت: "+player+"<br>الكمبيوتر: "+computer+
-  "<br><b>"+result+"</b>";
-}
-</script>
+        if(seconds <= 0){
+          clearInterval(countdown);
+          running = false;
+          document.getElementById("timer").innerText =
+            "انتهى الوقت! نتيجتك: " + score;
+        }
+      }, 1000);
+    }
+
+    function tap(){
+      if(running){
+        score++;
+        document.getElementById("score").innerText = score;
+      }
+    }
+
+    function rps(player){
+      const choices = ["حجر","ورق","مقص"];
+      const computer = choices[Math.floor(Math.random() * 3)];
+      let result = "";
+
+      if(player === computer){
+        result = "تعادل 🤝";
+      } else if(
+        (player === "حجر" && computer === "مقص") ||
+        (player === "ورق" && computer === "حجر") ||
+        (player === "مقص" && computer === "ورق")
+      ){
+        result = "أنت ربحت 🎉";
+      } else {
+        result = "الكمبيوتر ربح 😄";
+      }
+
+      document.getElementById("rpsResult").innerHTML =
+        "أنت: " + player + "<br>الكمبيوتر: " + computer + "<br><b>" + result + "</b>";
+    }
+  </script>
 
 </body>
 </html>
