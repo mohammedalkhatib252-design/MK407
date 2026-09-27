@@ -29,7 +29,6 @@
       padding: 20px;
     }
 
-    /* شاشة البداية */
     #splash {
       position: fixed;
       inset: 0;
@@ -58,7 +57,6 @@
       justify-content: center;
       font-size: 72px;
       font-weight: bold;
-      box-shadow: 0 0 35px rgba(255,255,255,0.12);
       animation: logoStart 1.2s ease;
     }
 
@@ -67,42 +65,25 @@
       font-size: 35px;
       font-weight: bold;
       letter-spacing: 4px;
-      animation: titleStart 1.4s ease;
     }
 
     .splash-text {
       margin-top: 10px;
       color: #999;
       font-size: 14px;
-      animation: titleStart 1.7s ease;
     }
 
     @keyframes logoStart {
-      0% {
+      from {
         transform: scale(0.4);
         opacity: 0;
       }
-      70% {
-        transform: scale(1.08);
-      }
-      100% {
+      to {
         transform: scale(1);
         opacity: 1;
       }
     }
 
-    @keyframes titleStart {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* التطبيق */
     .app {
       max-width: 470px;
       margin: auto;
@@ -126,7 +107,6 @@
       justify-content: center;
       font-size: 54px;
       font-weight: bold;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
 
     .header h1 {
@@ -138,7 +118,6 @@
     .header p {
       color: #aeb8c8;
       margin-top: 10px;
-      font-size: 16px;
     }
 
     .games {
@@ -152,7 +131,6 @@
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 22px;
       padding: 20px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
     }
 
     .card h2,
@@ -209,7 +187,6 @@
       font-size: 18px;
       margin-bottom: 12px;
       text-align: center;
-      outline: none;
     }
 
     .result {
@@ -247,6 +224,23 @@
       padding: 18px 5px;
     }
 
+    .xo-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+      direction: ltr;
+    }
+
+    .xo-cell {
+      aspect-ratio: 1;
+      background: #fff;
+      color: #000;
+      font-size: 38px;
+      border-radius: 16px;
+      padding: 0;
+    }
+
     .footer {
       text-align: center;
       margin-top: 35px;
@@ -259,7 +253,6 @@
 
 <body>
 
-  <!-- شاشة البداية -->
   <div id="splash">
     <div class="splash-logo">M</div>
     <div class="splash-title">MK 407</div>
@@ -274,111 +267,101 @@
       <p>اختر لعبتك واستمتع</p>
     </div>
 
-    <!-- الصفحة الرئيسية -->
     <div id="home" class="games">
 
       <div class="card">
         <h2>🎯 خمن الرقم</h2>
-        <p>حاول تخمين الرقم الصحيح بين 1 و 10.</p>
-        <button class="play-btn" onclick="openGame('guessGame')">
-          ابدأ اللعب
-        </button>
+        <p>حاول تخمين الرقم الصحيح بين 1 و10.</p>
+        <button class="play-btn" onclick="openGame('guessGame')">ابدأ اللعب</button>
       </div>
 
       <div class="card">
         <h2>⚡ تحدي الضغط 10 ثواني</h2>
         <p>اضغط الزر أكبر عدد ممكن خلال 10 ثواني.</p>
-        <button class="play-btn" onclick="openGame('tapGame')">
-          ابدأ اللعب
-        </button>
+        <button class="play-btn" onclick="openGame('tapGame')">ابدأ اللعب</button>
       </div>
 
       <div class="card">
         <h2>✊ حجر ورقة مقص</h2>
         <p>العب ضد الكمبيوتر وشوف مين يربح.</p>
-        <button class="play-btn" onclick="openGame('rpsGame')">
-          ابدأ اللعب
-        </button>
+        <button class="play-btn" onclick="openGame('rpsGame')">ابدأ اللعب</button>
+      </div>
+
+      <div class="card">
+        <h2>❌⭕ XO</h2>
+        <p>العب XO ضد الكمبيوتر وحاول تربح.</p>
+        <button class="play-btn" onclick="openXO()">ابدأ اللعب</button>
       </div>
 
     </div>
 
-    <!-- لعبة خمن الرقم -->
     <div id="guessGame" class="game-screen">
       <h2>🎯 خمن الرقم</h2>
-      <p>أنا اخترت رقمًا بين 1 و 10. حاول تعرفه.</p>
+      <p>اختر رقمًا بين 1 و10.</p>
 
-      <input
-        id="guessInput"
-        type="number"
-        min="1"
-        max="10"
-        placeholder="اكتب رقم من 1 إلى 10"
-      >
+      <input id="guessInput" type="number" min="1" max="10" placeholder="اكتب الرقم">
 
-      <button class="play-btn" onclick="checkGuess()">
-        تحقق
-      </button>
+      <button class="play-btn" onclick="checkGuess()">تحقق</button>
 
       <div id="guessResult" class="result"></div>
 
-      <button class="back-btn" onclick="goHome()">
-        رجوع للرئيسية
-      </button>
+      <button class="back-btn" onclick="goHome()">رجوع للرئيسية</button>
     </div>
 
-    <!-- تحدي الضغط -->
     <div id="tapGame" class="game-screen">
       <h2>⚡ تحدي الضغط</h2>
-      <p>كم مرة تستطيع الضغط خلال 10 ثواني؟</p>
 
       <div id="timer" class="timer">الوقت: 10</div>
       <div id="tapCount" class="big-number">0</div>
 
-      <button id="startTapBtn" class="play-btn" onclick="startTapGame()">
-        ابدأ التحدي
-      </button>
+      <button id="startTapBtn" class="play-btn" onclick="startTapGame()">ابدأ التحدي</button>
 
-      <button
-        id="tapBtn"
-        class="play-btn"
-        onclick="tapNow()"
-        style="display:none; margin-top:12px;"
-      >
+      <button id="tapBtn" class="play-btn" onclick="tapNow()" style="display:none;margin-top:12px;">
         ⚡ اضغط!
       </button>
 
       <div id="tapResult" class="result"></div>
 
-      <button class="back-btn" onclick="goHome()">
-        رجوع للرئيسية
-      </button>
+      <button class="back-btn" onclick="goHome()">رجوع للرئيسية</button>
     </div>
 
-    <!-- حجر ورقة مقص -->
     <div id="rpsGame" class="game-screen">
       <h2>✊ حجر ورقة مقص</h2>
-      <p>اختر حركتك.</p>
 
       <div class="choices">
-        <button class="choice-btn" onclick="playRPS('rock')">
-          ✊<br>حجر
-        </button>
-
-        <button class="choice-btn" onclick="playRPS('paper')">
-          ✋<br>ورقة
-        </button>
-
-        <button class="choice-btn" onclick="playRPS('scissors')">
-          ✌️<br>مقص
-        </button>
+        <button class="choice-btn" onclick="playRPS('rock')">✊<br>حجر</button>
+        <button class="choice-btn" onclick="playRPS('paper')">✋<br>ورقة</button>
+        <button class="choice-btn" onclick="playRPS('scissors')">✌️<br>مقص</button>
       </div>
 
       <div id="rpsResult" class="result"></div>
 
-      <button class="back-btn" onclick="goHome()">
-        رجوع للرئيسية
+      <button class="back-btn" onclick="goHome()">رجوع للرئيسية</button>
+    </div>
+
+    <div id="xoGame" class="game-screen">
+      <h2>❌⭕ XO</h2>
+      <p>أنت ❌ والكمبيوتر ⭕</p>
+
+      <div class="xo-board">
+        <button class="xo-cell" onclick="xoMove(0)"></button>
+        <button class="xo-cell" onclick="xoMove(1)"></button>
+        <button class="xo-cell" onclick="xoMove(2)"></button>
+        <button class="xo-cell" onclick="xoMove(3)"></button>
+        <button class="xo-cell" onclick="xoMove(4)"></button>
+        <button class="xo-cell" onclick="xoMove(5)"></button>
+        <button class="xo-cell" onclick="xoMove(6)"></button>
+        <button class="xo-cell" onclick="xoMove(7)"></button>
+        <button class="xo-cell" onclick="xoMove(8)"></button>
+      </div>
+
+      <div id="xoResult" class="result">دورك ❌</div>
+
+      <button class="play-btn" onclick="resetXO()" style="margin-top:15px;">
+        لعبة جديدة
       </button>
+
+      <button class="back-btn" onclick="goHome()">رجوع للرئيسية</button>
     </div>
 
     <div class="footer">
@@ -388,20 +371,17 @@
   </div>
 
   <script>
-    /* شاشة البداية */
-    window.addEventListener("load", function () {
-      setTimeout(function () {
+    window.addEventListener("load", function() {
+      setTimeout(function() {
         const splash = document.getElementById("splash");
         splash.classList.add("hide");
 
-        setTimeout(function () {
+        setTimeout(function() {
           splash.style.display = "none";
         }, 700);
-
-      }, 2000);
+      }, 1800);
     });
 
-    /* فتح لعبة */
     function openGame(id) {
       document.getElementById("home").style.display = "none";
 
@@ -410,51 +390,43 @@
       });
 
       document.getElementById(id).classList.add("active");
-      window.scrollTo(0, 0);
+      window.scrollTo(0,0);
     }
 
-    /* الرجوع للرئيسية */
     function goHome() {
       document.querySelectorAll(".game-screen").forEach(function(screen) {
         screen.classList.remove("active");
       });
 
       document.getElementById("home").style.display = "grid";
-      window.scrollTo(0, 0);
+      window.scrollTo(0,0);
     }
 
-    /* خمن الرقم */
     let secretNumber = Math.floor(Math.random() * 10) + 1;
 
     function checkGuess() {
-      const input = document.getElementById("guessInput");
+      const guess = Number(document.getElementById("guessInput").value);
       const result = document.getElementById("guessResult");
-      const guess = Number(input.value);
 
-      if (guess < 1 || guess > 10 || !guess) {
-        result.textContent = "⚠️ اكتب رقمًا بين 1 و 10";
+      if (!guess || guess < 1 || guess > 10) {
+        result.textContent = "⚠️ اختر رقمًا بين 1 و10";
         return;
       }
 
       if (guess === secretNumber) {
         result.textContent = "🎉 ممتاز! الرقم صحيح";
-
         secretNumber = Math.floor(Math.random() * 10) + 1;
-        input.value = "";
-
       } else if (guess < secretNumber) {
-        result.textContent = "⬆️ جرّب رقمًا أكبر";
-
+        result.textContent = "⬆️ الرقم أكبر";
       } else {
-        result.textContent = "⬇️ جرّب رقمًا أصغر";
+        result.textContent = "⬇️ الرقم أصغر";
       }
     }
 
-    /* تحدي الضغط */
     let taps = 0;
     let tapping = false;
-    let tapTimer;
     let remaining = 10;
+    let tapTimer;
 
     function startTapGame() {
       taps = 0;
@@ -467,11 +439,12 @@
       document.getElementById("tapBtn").style.display = "block";
       document.getElementById("startTapBtn").style.display = "none";
 
-      tapTimer = setInterval(function () {
+      clearInterval(tapTimer);
+
+      tapTimer = setInterval(function() {
         remaining--;
 
-        document.getElementById("timer").textContent =
-          "الوقت: " + remaining;
+        document.getElementById("timer").textContent = "الوقت: " + remaining;
 
         if (remaining <= 0) {
           clearInterval(tapTimer);
@@ -479,9 +452,7 @@
 
           document.getElementById("tapBtn").style.display = "none";
           document.getElementById("startTapBtn").style.display = "block";
-          document.getElementById("startTapBtn").textContent =
-            "العب مرة ثانية";
-
+          document.getElementById("startTapBtn").textContent = "العب مرة ثانية";
           document.getElementById("tapResult").textContent =
             "🏆 نتيجتك: " + taps + " ضغطة";
         }
@@ -495,11 +466,9 @@
       }
     }
 
-    /* حجر ورقة مقص */
     function playRPS(player) {
-      const choices = ["rock", "paper", "scissors"];
-      const computer =
-        choices[Math.floor(Math.random() * choices.length)];
+      const options = ["rock", "paper", "scissors"];
+      const computer = options[Math.floor(Math.random() * options.length)];
 
       const names = {
         rock: "حجر ✊",
@@ -507,26 +476,115 @@
         scissors: "مقص ✌️"
       };
 
-      let message = "";
+      let result;
 
       if (player === computer) {
-        message = "🤝 تعادل";
-
+        result = "🤝 تعادل";
       } else if (
         (player === "rock" && computer === "scissors") ||
         (player === "paper" && computer === "rock") ||
         (player === "scissors" && computer === "paper")
       ) {
-        message = "🎉 أنت ربحت!";
-
+        result = "🎉 أنت ربحت!";
       } else {
-        message = "😅 الكمبيوتر ربح";
+        result = "😅 الكمبيوتر ربح";
       }
 
       document.getElementById("rpsResult").innerHTML =
         "أنت: <b>" + names[player] + "</b><br>" +
         "الكمبيوتر: <b>" + names[computer] + "</b><br><br>" +
-        message;
+        result;
+    }
+
+    let xoBoard = ["","","","","","","","",""];
+    let xoFinished = false;
+
+    const wins = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    function openXO() {
+      resetXO();
+      openGame("xoGame");
+    }
+
+    function xoMove(index) {
+      if (xoFinished || xoBoard[index] !== "") return;
+
+      xoBoard[index] = "❌";
+      drawXO();
+
+      if (checkXO("❌")) {
+        document.getElementById("xoResult").textContent = "🎉 أنت ربحت!";
+        xoFinished = true;
+        return;
+      }
+
+      if (xoBoard.every(cell => cell !== "")) {
+        document.getElementById("xoResult").textContent = "🤝 تعادل";
+        xoFinished = true;
+        return;
+      }
+
+      document.getElementById("xoResult").textContent = "دور الكمبيوتر ⭕";
+
+      setTimeout(computerXO, 400);
+    }
+
+    function computerXO() {
+      if (xoFinished) return;
+
+      let empty = [];
+
+      xoBoard.forEach(function(cell, index) {
+        if (cell === "") empty.push(index);
+      });
+
+      if (empty.length === 0) return;
+
+      const choice = empty[Math.floor(Math.random() * empty.length)];
+      xoBoard[choice] = "⭕";
+
+      drawXO();
+
+      if (checkXO("⭕")) {
+        document.getElementById("xoResult").textContent = "😅 الكمبيوتر ربح";
+        xoFinished = true;
+        return;
+      }
+
+      if (xoBoard.every(cell => cell !== "")) {
+        document.getElementById("xoResult").textContent = "🤝 تعادل";
+        xoFinished = true;
+        return;
+      }
+
+      document.getElementById("xoResult").textContent = "دورك ❌";
+    }
+
+    function checkXO(symbol) {
+      return wins.some(function(combo) {
+        return combo.every(function(index) {
+          return xoBoard[index] === symbol;
+        });
+      });
+    }
+
+    function drawXO() {
+      const cells = document.querySelectorAll(".xo-cell");
+
+      cells.forEach(function(cell, index) {
+        cell.textContent = xoBoard[index];
+      });
+    }
+
+    function resetXO() {
+      xoBoard = ["","","","","","","","",""];
+      xoFinished = false;
+      drawXO();
+      document.getElementById("xoResult").textContent = "دورك ❌";
     }
   </script>
 
