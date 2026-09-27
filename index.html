@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MK 407 Games</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#10131a;
+  color:white;
+  text-align:center;
+}
+header{
+  padding:35px 15px;
+  background:linear-gradient(135deg,#111,#243cff);
+}
+h1{
+  font-size:42px;
+  margin:0;
+}
+.logo{
+  font-size:70px;
+}
+.container{
+  padding:20px;
+  max-width:500px;
+  margin:auto;
+}
+.card{
+  background:#1d2230;
+  margin:18px 0;
+  padding:25px;
+  border-radius:22px;
+  box-shadow:0 8px 20px #0005;
+}
+button{
+  background:#2e54ff;
+  color:white;
+  border:0;
+  padding:14px 25px;
+  border-radius:14px;
+  font-size:18px;
+  margin:7px;
+}
+input{
+  padding:14px;
+  border-radius:12px;
+  border:0;
+  font-size:18px;
+  width:120px;
+  text-align:center;
+}
+#score{
+  font-size:45px;
+  font-weight:bold;
+}
+footer{
+  padding:25px;
+  color:#999;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🎮</div>
+<h1>MK 407</h1>
+<p>عالم الألعاب</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>🎯 خمن الرقم</h2>
+<p>اختر رقم من 1 إلى 10</p>
+<input id="guess" type="number" min="1" max="10">
+<br>
+<button onclick="guessGame()">جرب</button>
+<p id="guessResult"></p>
+</div>
+
+<div class="card">
+<h2>⚡ تحدي الضغط</h2>
+<p>كم مرة تستطيع الضغط خلال 10 ثواني؟</p>
+<div id="score">0</div>
+<button onclick="tap()">اضغط بسرعة!</button>
+<button onclick="startTap()">ابدأ التحدي</button>
+<p id="timer"></p>
+</div>
+
+<div class="card">
+<h2>✊ حجر ورق مقص</h2>
+<button onclick="rps('حجر')">✊ حجر</button>
+<button onclick="rps('ورق')">✋ ورق</button>
+<button onclick="rps('مقص')">✌️ مقص</button>
+<p id="rpsResult"></p>
+</div>
+
+</div>
+
+<footer>
+MK 407 © 2026
+</footer>
+
+<script>
+function guessGame(){
+  const user = Number(document.getElementById("guess").value);
+  const number = Math.floor(Math.random()*10)+1;
+
+  if(user === number){
+    document.getElementById("guessResult").innerHTML =
+    "🎉 مبروك! الرقم كان " + number;
+  }else{
+    document.getElementById("guessResult").innerHTML =
+    "❌ الرقم الصحيح كان " + number;
+  }
+}
+
+let score = 0;
+let running = false;
+
+function startTap(){
+  score = 0;
+  running = true;
+  document.getElementById("score").innerText = score;
+
+  let seconds = 10;
+  document.getElementById("timer").innerText =
+  "الوقت: " + seconds;
+
+  const countdown = setInterval(()=>{
+    seconds--;
+
+    document.getElementById("timer").innerText =
+    "الوقت: " + seconds;
+
+    if(seconds <= 0){
+      clearInterval(countdown);
+      running = false;
+
+      document.getElementById("timer").innerText =
+      "انتهى الوقت! نتيجتك: " + score;
+    }
+  },1000);
+}
+
+function tap(){
+  if(running){
+    score++;
+    document.getElementById("score").innerText = score;
+  }
+}
+
+function rps(player){
+  const choices = ["حجر","ورق","مقص"];
+  const computer =
+  choices[Math.floor(Math.random()*3)];
+
+  let result;
+
+  if(player === computer){
+    result = "تعادل 🤝";
+  }
+  else if(
+    (player==="حجر" && computer==="مقص") ||
+    (player==="ورق" && computer==="حجر") ||
+    (player==="مقص" && computer==="ورق")
+  ){
+    result = "أنت ربحت 🎉";
+  }
+  else{
+    result = "الكمبيوتر ربح 😄";
+  }
+
+  document.getElementById("rpsResult").innerHTML =
+  "أنت: "+player+"<br>الكمبيوتر: "+computer+
+  "<br><b>"+result+"</b>";
+}
+</script>
+
+</body>
+</html>
