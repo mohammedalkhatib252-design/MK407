@@ -1,42 +1,440 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MK 407</title>
-  <meta name="theme-color" content="#000000">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>MK 407</title>
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MK 407">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: white;
-      font-family: Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-    h1 {
-      font-size: 46px;
-      letter-spacing: 4px;
-      margin-bottom: 10px;
-    }
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
+  touch-action:none;
+}
 
-    p {
-      color: #999;
-      font-size: 18px;
-    }
-  </style>
+#menu{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(#050505,#101827);
+  z-index:10;
+  text-align:center;
+  padding:25px;
+}
+
+.logo{
+  width:110px;
+  height:110px;
+  border-radius:28px;
+  background:#050505;
+  border:1px solid #444;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:60px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+h1{
+  font-size:40px;
+  letter-spacing:4px;
+  margin:0 0 8px;
+}
+
+.subtitle{
+  color:#aaa;
+  margin-bottom:30px;
+}
+
+.start{
+  width:100%;
+  max-width:320px;
+  border:0;
+  border-radius:16px;
+  padding:17px;
+  background:white;
+  color:black;
+  font-size:19px;
+  font-weight:bold;
+}
+
+#game{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#111;
+}
+
+canvas{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+#hud{
+  position:fixed;
+  top:20px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-between;
+  padding:0 22px;
+  font-size:18px;
+  font-weight:bold;
+  z-index:3;
+  direction:ltr;
+}
+
+.controls{
+  position:fixed;
+  bottom:25px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-between;
+  padding:0 30px;
+  z-index:4;
+}
+
+.control{
+  width:85px;
+  height:70px;
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:20px;
+  background:rgba(0,0,0,.6);
+  color:white;
+  font-size:34px;
+}
+
+#gameOver{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:20;
+  background:rgba(0,0,0,.88);
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  padding:25px;
+}
+
+#gameOver h2{
+  font-size:38px;
+  margin:0 0 15px;
+}
+
+#finalScore{
+  font-size:24px;
+  margin-bottom:8px;
+}
+
+#bestScore{
+  color:#aaa;
+  margin-bottom:30px;
+}
+
+.again{
+  width:100%;
+  max-width:300px;
+  padding:16px;
+  border:0;
+  border-radius:15px;
+  font-size:18px;
+  font-weight:bold;
+}
+</style>
 </head>
 
 <body>
-  <div>
-    <h1>MK 407</h1>
-    <p>قريباً...</p>
+
+<div id="menu">
+  <div class="logo">M</div>
+  <h1>MK 407</h1>
+  <div class="subtitle">🏎️ تحدي الطريق</div>
+  <button class="start" onclick="startGame()">ابدأ السباق</button>
+</div>
+
+<div id="game">
+  <canvas id="canvas"></canvas>
+
+  <div id="hud">
+    <div>🏆 <span id="score">0</span></div>
+    <div>MK 407</div>
   </div>
+
+  <div class="controls">
+    <button class="control" id="left">←</button>
+    <button class="control" id="right">→</button>
+  </div>
+</div>
+
+<div id="gameOver">
+  <h2>💥 انتهى السباق</h2>
+  <div id="finalScore"></div>
+  <div id="bestScore"></div>
+  <button class="again" onclick="startGame()">العب مرة ثانية</button>
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let w,h;
+let car;
+let enemies=[];
+let roadLines=[];
+let running=false;
+let score=0;
+let speed=6;
+let leftPressed=false;
+let rightPressed=false;
+
+function resize(){
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  w=canvas.width;
+  h=canvas.height;
+}
+
+window.addEventListener("resize",resize);
+resize();
+
+function reset(){
+  score=0;
+  speed=6;
+  enemies=[];
+  roadLines=[];
+
+  car={
+    x:w/2-27,
+    y:h-170,
+    width:54,
+    height:95,
+    speed:8
+  };
+
+  for(let y=-100;y<h+100;y+=120){
+    roadLines.push(y);
+  }
+}
+
+function startGame(){
+  document.getElementById("menu").style.display="none";
+  document.getElementById("gameOver").style.display="none";
+  document.getElementById("game").style.display="block";
+
+  reset();
+  running=true;
+  requestAnimationFrame(loop);
+}
+
+function drawRoad(){
+  ctx.fillStyle="#262626";
+  ctx.fillRect(0,0,w,h);
+
+  const roadWidth=Math.min(w*0.82,480);
+  const roadX=(w-roadWidth)/2;
+
+  ctx.fillStyle="#393939";
+  ctx.fillRect(roadX,0,roadWidth,h);
+
+  ctx.fillStyle="#ddd";
+  ctx.fillRect(roadX,0,5,h);
+  ctx.fillRect(roadX+roadWidth-5,0,5,h);
+
+  ctx.fillStyle="#fff";
+
+  roadLines.forEach((y,i)=>{
+    ctx.fillRect(w/2-4,y,8,55);
+    roadLines[i]+=speed;
+
+    if(roadLines[i]>h){
+      roadLines[i]=-70;
+    }
+  });
+}
+
+function drawCar(x,y,color){
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.roundRect(x,y,54,95,12);
+  ctx.fill();
+
+  ctx.fillStyle="#111";
+  ctx.fillRect(x+10,y+14,34,22);
+  ctx.fillRect(x+10,y+55,34,18);
+
+  ctx.fillStyle="#fff";
+  ctx.fillRect(x+5,y+8,8,10);
+  ctx.fillRect(x+41,y+8,8,10);
+
+  ctx.fillStyle="#e00";
+  ctx.fillRect(x+5,y+79,8,9);
+  ctx.fillRect(x+41,y+79,8,9);
+}
+
+function spawnEnemy(){
+  if(Math.random()<0.025 + score/50000){
+    const roadWidth=Math.min(w*0.82,480);
+    const roadX=(w-roadWidth)/2;
+
+    const x=
+      roadX+20+
+      Math.random()*(roadWidth-94);
+
+    enemies.push({
+      x:x,
+      y:-120,
+      width:54,
+      height:95
+    });
+  }
+}
+
+function collision(a,b){
+  return (
+    a.x < b.x+b.width &&
+    a.x+a.width > b.x &&
+    a.y < b.y+b.height &&
+    a.y+a.height > b.y
+  );
+}
+
+function update(){
+  const roadWidth=Math.min(w*0.82,480);
+  const roadX=(w-roadWidth)/2;
+
+  if(leftPressed) car.x-=car.speed;
+  if(rightPressed) car.x+=car.speed;
+
+  const minX=roadX+10;
+  const maxX=roadX+roadWidth-car.width-10;
+
+  if(car.x<minX) car.x=minX;
+  if(car.x>maxX) car.x=maxX;
+
+  spawnEnemy();
+
+  enemies.forEach(enemy=>{
+    enemy.y+=speed;
+
+    if(collision(car,enemy)){
+      endGame();
+    }
+  });
+
+  enemies=enemies.filter(e=>e.y<h+150);
+
+  score++;
+  document.getElementById("score").textContent=
+    Math.floor(score/10);
+
+  speed=6+Math.min(score/1000,7);
+}
+
+function draw(){
+  drawRoad();
+
+  drawCar(car.x,car.y,"#050505");
+
+  enemies.forEach(enemy=>{
+    drawCar(enemy.x,enemy.y,"#b00020");
+  });
+}
+
+function loop(){
+  if(!running)return;
+
+  update();
+  draw();
+
+  if(running){
+    requestAnimationFrame(loop);
+  }
+}
+
+function endGame(){
+  running=false;
+
+  let final=Math.floor(score/10);
+  let best=Number(localStorage.getItem("mk407best")||0);
+
+  if(final>best){
+    best=final;
+    localStorage.setItem("mk407best",best);
+  }
+
+  document.getElementById("finalScore").textContent=
+    "نتيجتك: "+final;
+
+  document.getElementById("bestScore").textContent=
+    "أفضل نتيجة: "+best;
+
+  document.getElementById("gameOver").style.display="flex";
+}
+
+function pressLeft(on){
+  leftPressed=on;
+}
+
+function pressRight(on){
+  rightPressed=on;
+}
+
+const left=document.getElementById("left");
+const right=document.getElementById("right");
+
+left.addEventListener("touchstart",e=>{
+  e.preventDefault();
+  pressLeft(true);
+});
+
+left.addEventListener("touchend",()=>{
+  pressLeft(false);
+});
+
+right.addEventListener("touchstart",e=>{
+  e.preventDefault();
+  pressRight(true);
+});
+
+right.addEventListener("touchend",()=>{
+  pressRight(false);
+});
+
+left.addEventListener("mousedown",()=>pressLeft(true));
+left.addEventListener("mouseup",()=>pressLeft(false));
+
+right.addEventListener("mousedown",()=>pressRight(true));
+right.addEventListener("mouseup",()=>pressRight(false));
+
+window.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")leftPressed=true;
+  if(e.key==="ArrowRight")rightPressed=true;
+});
+
+window.addEventListener("keyup",e=>{
+  if(e.key==="ArrowLeft")leftPressed=false;
+  if(e.key==="ArrowRight")rightPressed=false;
+});
+</script>
+
 </body>
 </html>
